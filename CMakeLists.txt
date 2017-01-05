@@ -6,6 +6,8 @@ include(CheckFunctionExists)
 CHECK_FUNCTION_EXISTS(strdup  HAVE_STRDUP)
 CHECK_FUNCTION_EXISTS(strndup  HAVE_STRNDUP)
 
+include (CheckIncludeFiles)
+CHECK_INCLUDE_FILES(search.h HAVE_SEARCH_H)
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/src/config.h.in.cmake"
@@ -76,11 +78,15 @@ set (xraylib_SRC_FILES
   "src/auger_trans.c"
   "src/xrf_cross_sections_aux.c"
   "src/crystal_diffraction.c"
-  "src/xraylib-nist-compounds.c"
   "src/densities.c"
-  "src/xraylib-radionuclides.c"
 )
 
+if( HAVE_SEARCH_H )
+  set (xraylib_SRC_FILES "${xraylib_SRC_FILES}"
+    "src/xraylib-nist-compounds.c"
+    "src/xraylib-radionuclides.c"
+  )
+endif()
 
 add_library ( xraylib ${xraylib_SRC_FILES} )
 add_custom_command(
