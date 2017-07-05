@@ -88,7 +88,7 @@ if( HAVE_SEARCH_H )
   )
 endif()
 
-add_library ( xraylib ${xraylib_SRC_FILES} )
+add_library ( XRayLib ${xraylib_SRC_FILES} )
 add_custom_command(
   OUTPUT xrayglob_inline.c
   COMMAND ${CMAKE_COMMAND} -E env "XRAYLIB_DIR=${CMAKE_CURRENT_SOURCE_DIR}" $<TARGET_FILE:prdata>
@@ -100,13 +100,13 @@ add_custom_command(
 # Define headers for this library. PUBLIC headers are used for
 # compiling the library, and will be added to consumers' build
 # paths.
-target_include_directories(xraylib PUBLIC
+target_include_directories(XRayLib PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     PRIVATE src)
 
 install (
-  TARGETS xraylib EXPORT XRayLibConfig
+  TARGETS XRayLib EXPORT XRayLibConfig
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin # this is for Windows
@@ -120,5 +120,5 @@ install (DIRECTORY include/ DESTINATION include)
 install (EXPORT XRayLibConfig DESTINATION cmake)
 
 # This makes the project importable from the build directory
-export (TARGETS xraylib FILE XRayLibConfig.cmake)
-export (PACKAGE xraylib)
+export (TARGETS XRayLib FILE XRayLibConfig.cmake)
+export (PACKAGE XRayLib)
