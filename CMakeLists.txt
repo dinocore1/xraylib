@@ -38,10 +38,18 @@ if (NOT CMAKE_CROSSCOMPILING)
     target_link_libraries(prdata m)
   endif()
 
-  export(
+  install (
     TARGETS prdata
-    FILE "${CMAKE_BINARY_DIR}/ImportExecutables.cmake"
+    EXPORT prdataConfig
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
   )
+
+  install(EXPORT prdataConfig
+    DESTINATION cmake
+  )
+
 else()
   set (IMPORT_EXECUTABLES "IMPORTFILE-NOTFOUND" CACHE FILEPATH "Point it to the export file from a native build")
   include (${IMPORT_EXECUTABLES})
@@ -96,7 +104,6 @@ add_custom_command(
 )
 
 
-
 # Define headers for this library. PUBLIC headers are used for
 # compiling the library, and will be added to consumers' build
 # paths.
@@ -106,19 +113,17 @@ target_include_directories(XRayLib PUBLIC
     PRIVATE src)
 
 install (
-  TARGETS XRayLib EXPORT XRayLibConfig
+  TARGETS XRayLib
+  EXPORT XRayLibConfig
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin # this is for Windows
 )
-install (DIRECTORY include/ DESTINATION include)
 
+install (DIRECTORY include/
+  DESTINATION include
+)
 
-# This make the project importable from the install directory
-# put the config file in per-project dir (name MUST match), can also
-# just go into <prefix>/cmake
-install (EXPORT XRayLibConfig DESTINATION cmake)
-
-# This makes the project importable from the build directory
-export (TARGETS XRayLib FILE XRayLibConfig.cmake)
-export (PACKAGE XRayLib)
+install(EXPORT XRayLibConfig
+  DESTINATION cmake
+)
