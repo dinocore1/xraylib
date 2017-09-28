@@ -103,6 +103,9 @@ add_custom_command(
   DEPENDS prdata
 )
 
+set_target_properties(XRayLib
+  PROPERTIES POSITION_INDEPENDENT_CODE ON
+)
 
 # Define headers for this library. PUBLIC headers are used for
 # compiling the library, and will be added to consumers' build
