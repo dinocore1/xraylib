@@ -37,4 +37,3 @@ double AtomicWeight(int Z)
   }
   return atomic_weight;
 }
-

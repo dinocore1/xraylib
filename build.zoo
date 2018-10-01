@@ -1,0 +1,117 @@
+
+def versionStr = '3.3.0'
+
+exe {
+  name 'prdata'
+  version "$versionStr"
+
+  src files(
+    'src/pr_data.c',
+    'src/xrayvars.c',
+    'src/xrayglob.c',
+    'src/xrayfiles.c',
+    'src/fluor_yield.c',
+    'src/coskron.c',
+    'src/crystal_diffraction.c',
+    'src/scattering.c',
+    'src/fi.c',
+    'src/fii.c',
+    'src/splint.c')
+
+}
+
+lib {
+  name 'xraylib.dll'
+  version "$versionStr"
+  exportHeaders {
+    from 'include/**/*.h'
+  }
+
+  include files('src', 'include', '.')
+
+  src files(
+  'src/xrayvars.c',
+  'src/cross_sections.c',
+  'src/scattering.c',
+  'src/atomicweight.c',
+  'src/edges.c',
+  'src/fluor_lines.c',
+  'src/fluor_yield.c',
+  'src/jump.c',
+  'src/coskron.c',
+  'src/radrate.c',
+  'src/cs_line.c',
+  'src/polarized.c',
+  'src/splint.c',
+  'src/cs_barns.c',
+  'src/fi.c',
+  'src/fii.c',
+  'src/kissel_pe.c',
+  'src/xrayfiles_inline.c',
+  'src/xraylib-aux.c',
+  'src/xraylib-parser.c',
+  'src/cs_cp.c',
+  'src/refractive_indices.c',
+  'src/comptonprofiles.c',
+  'src/atomiclevelwidth.c',
+  'src/auger_trans.c',
+  'src/xrf_cross_sections_aux.c',
+  'src/crystal_diffraction.c',
+  'src/xraylib-nist-compounds.c',
+  'src/densities.c',
+  'src/xraylib-radionuclides.c',
+  'build/generated/xrayglob_inline.c')
+}
+
+task {
+  output file('build/generated/xrayglob_inline.c')
+  depends 'prdata'
+
+  env { ['XRAYLIB_DIR': "${projectDir}"] }
+  workingDir 'build/generated'
+  cmd { [getExe('prdata').output] }
+}
+
+def msvccinstall = 'C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin'
+
+compile {
+  language 'c'
+  target 'win-x86_64'
+
+  all {
+    flags '/Wall', '/openmp', '/DBUILDING_API'
+    includes files('C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include', 'C:/Program Files (x86)/Windows Kits/10/Include/10.0.10240.0/ucrt')
+  }
+
+  debug {
+    flags '/Od', '/DEBUG'
+  }
+
+  release {
+    flags '/O2'
+  }
+
+  workingDir "$msvccinstall"
+
+  cmd { ["$msvccinstall/cl", flags, prefix('/I', includes), prefix('/Fo', output), '/c', input] }
+}
+
+def mingwinstall = 'C:/Users/pauls/.zookeeper/toolchains/mingw64/bin'
+
+
+
+link {
+  target 'win-x86_64'
+  language 'c'
+
+  workingDir "$mingwinstall"
+  cmd { ["$mingwinstall/gcc", flags, '-o', output, input] }
+}
+
+staticlib {
+  target 'win-x86_64'
+  language 'c'
+
+  workingDir "$mingwinstall"
+  cmd { ["$mingwinstall/gcc", '-shared', '-o', output, input] }
+}

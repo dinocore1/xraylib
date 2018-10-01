@@ -20,7 +20,11 @@ THIS SOFTWARE IS PROVIDED BY Bruno Golosio, Antonio Brunetti, Manuel Sanchez del
 extern "C" {
 #endif
 
-
+#ifdef BUILDING_API
+#define API_DLL __declspec(dllexport)
+#else
+#define API_DLL __declspec(dllimport)
+#endif
 
 #define XRAYLIB_MAJOR 3
 #define XRAYLIB_MINOR 3
